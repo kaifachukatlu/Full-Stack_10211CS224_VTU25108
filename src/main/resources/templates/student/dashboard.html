@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Candidate Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="main-content">
+        <div class="page-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar-nav">
+                <a th:href="@{/student/dashboard}" class="active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <a th:href="@{/student/jobs}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Find Jobs
+                </a>
+                <a th:href="@{/student/profile}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Profile Settings
+                </a>
+            </aside>
+
+            <!-- Main Area -->
+            <div>
+                <h2 style="margin-bottom: 24px;">Welcome back, <span th:text="${user.fullName}"></span>!</h2>
+                
+                <div class="dashboard-grid" style="margin-bottom: 32px;">
+                    <div class="stat-card">
+                        <div class="stat-label">Applications Sent</div>
+                        <div class="stat-value" th:text="${totalApplied}">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Pending Review</div>
+                        <div class="stat-value" style="color: var(--status-warning);" th:text="${pending}">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Interviews / Shortlisted</div>
+                        <div class="stat-value" style="color: var(--status-success);" th:text="${shortlisted}">0</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 16px;">Recent Applications</h3>
+                
+                <div class="table-container">
+                    <div th:if="${#lists.isEmpty(applications)}" style="padding: 40px; text-align: center; color: var(--text-secondary);">
+                        <p>You haven't applied to any jobs yet.</p>
+                        <a th:href="@{/student/jobs}" class="btn-primary" style="margin-top: 16px;">Browse Jobs</a>
+                    </div>
+                    
+                    <table th:unless="${#lists.isEmpty(applications)}">
+                        <thead>
+                            <tr>
+                                <th>Job Role</th>
+                                <th>Company</th>
+                                <th>Applied On</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="app : ${applications}">
+                                <td style="font-weight: 500; color: var(--text-primary);" th:text="${app.job.title}">Job Title</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div class="company-logo" style="width: 32px; height: 32px; font-size: 0.9rem;" th:text="${#strings.substring(app.job.company,0,1)}">C</div>
+                                        <span th:text="${app.job.company}">Company</span>
+                                    </div>
+                                </td>
+                                <td style="color: var(--text-secondary);" th:text="${#temporals.format(app.appliedAt, 'MMM dd, yyyy')}">Date</td>
+                                <td>
+                                    <span class="badge" th:classappend="${app.status.name() == 'PENDING'} ? 'blue' : ''" th:text="${app.status}">STATUS</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Nav -->
+    <nav th:replace="~{fragments :: mobile-nav}"></nav>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>
